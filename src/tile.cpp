@@ -36,8 +36,8 @@ Tile::~Tile() {
 }
 
 void Tile::setAll(unsigned char type, unsigned char event, unsigned char options, unsigned char surface) {
-	this.type = type;
-	this.event = event;
-	this.options = options;
-	this.surface = surface;
+	this->type = type;
+	this->event = event;
+	this->options = options;
+	this->surface = surface;
 }

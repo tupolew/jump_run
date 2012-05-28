@@ -30,6 +30,7 @@
 #include <cstdio>
 #include <cstdlib>
 
+
 Tile_Engine::Tile_Engine(const char *file) {
 	auto func = [](Tile_Engine *tile_engine, char *row, int y_pos) {
 		union {
@@ -64,21 +65,22 @@ Tile_Engine::Tile_Engine(const char *file) {
 			row+=(k+1);
 		}
 	};
-	FILE *level_file = fopen(file, "r");
+	std::FILE *level_file = std::fopen(file, "r");
 	if (level_file == NULL) {
 		std::cerr << "Error while fopen(" << file << ")\n";
 		exit(1);
 	}
-	fscanf(level_file, "%ix%i\n", &x_size, &y_size);
+	std::fscanf(level_file, "%ix%i\n", &x_size, &y_size);
 	tiles = new Tile*[y_size];
 	for (int i = 0; i < y_size; i++) {
-		tiles[i] = new Tile;
+		tiles[i] = new Tile[x_size];
 	}
 	char *buf=(char *)malloc(sizeof(char)*11*x_size);
 	for (int i = 0; i < y_size; i++) {
-		fgets(buf, x_size*11, level_file);
+		std::fgets(buf, x_size*11, level_file);
 		func(this, buf, i);
 	}
+	null.setAll(0, 0, 0, 0);
 }
 
 Tile_Engine::~Tile_Engine() {
@@ -86,5 +88,5 @@ Tile_Engine::~Tile_Engine() {
 }
 
 Tile *Tile_Engine::getTile(int x, int y) {
-	return (y < y_size && x < x_size)?tiles[y][x]:NULL;
+	return (y < y_size && x < x_size)?&tiles[y][x]:&null;
 }

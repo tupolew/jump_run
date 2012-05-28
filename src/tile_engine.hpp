@@ -31,9 +31,13 @@
 
 class Tile_Engine {
 public:
+	Tile_Engine() = delete;
 	Tile_Engine(const char *file);
 	~Tile_Engine();
 	Tile *getTile(int x, int y);
+	int get_x_size() {return x_size;};
+	int get_y_size() {return y_size;};
+	Tile null;
 private:
 	int x_size;
 	int y_size;

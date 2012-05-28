@@ -30,5 +30,8 @@
 int main(int argc, char *argv[]) {
 	Tile_Engine tile("01.level");
 	Graphic_Engine graphic(&tile, 1024, 768);
+	while(true) {
+		graphic.drawWorld(0,8);
+	}
 	return 0;
 }
