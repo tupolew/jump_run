@@ -36,7 +36,7 @@
 int main(int argc, char *argv[]) {
 	Tile_Engine tile("01.level");
 	Control control;
-	Player player(32.0, 864.0, 10, &tile, &control);
+	Player player(32.0, 0.0, 10, &tile, &control);
 	Graphic_Engine graphic(&tile, 1024, 768, &player);
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) == -1) {
 		std::cerr << "Error while SDL_Init: " << SDL_GetError();

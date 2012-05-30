@@ -61,6 +61,11 @@ void Player::calculate(double time) {
 	if (_pos_y_2 != _pos_y) {
 		_y_vel = 0;
 	}
+	double _pos_x_2 = _pos_x+time*_x_vel;
+	_pos_x = _tile_engine->get_x_collision(_pos_x, _pos_x_2,_pos_y,31.9999999999999,31.9999999999999);
+	if (_pos_x_2 != _pos_x) {
+		_x_vel = 0;
+	}
 }
 
 

@@ -1,0 +1,17 @@
+background: ./textures/background_01.png
+texture count: 12
+texture 01: ./textures/mitte_0.png
+texture 02: ./textures/oben_1.png
+texture 03: ./textures/oben_2_1.png
+texture 04: ./textures/oben_2_2.png
+texture 05: ./textures/oben_3.png
+texture 06: ./textures/oben_4.png
+texture 07: ./textures/oben_5.png
+texture 08: ./textures/oben_6_1.png
+texture 09: ./textures/oben_6_2.png
+texture 10: ./textures/rechts_1_1.png
+texture 11: ./textures/rechts_1_2.png
+texture 12: ./textures/links_1_1.png
+texture 13: ./textures/links_1_2.png
+texture 14: ./textures/oben_7.png
+

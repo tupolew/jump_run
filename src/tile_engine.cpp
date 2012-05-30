@@ -88,7 +88,35 @@ Tile_Engine::~Tile_Engine() {
 }
 
 double Tile_Engine::get_x_collision(double x1, double x2, double y1, double x_size, double y_size) {
-	return 0;
+	double pos_x;
+	if (x2 > x1 ) {
+		int y_ceil = (int)(y1/32.0);
+		int y_floor = (int)((y1+y_size)/32.0);
+		int x_start = (int)((x1+x_size)/32.0);
+		int x_end = (int)((x2+x_size)/32.0);
+		for (int i = x_start; i <= x_end; i++) {
+			if (tiles[y_ceil][i].getType() == 0 && tiles[y_floor][i].getType() == 0) {
+				pos_x = (i==x_end)?x2:(32*i);
+			}
+			else {
+				break;
+			}
+		}
+	} else {
+		int y_ceil = (int)(y1/32.0);
+		int y_floor = (int)((y1+y_size)/32.0);
+		int x_start = (int)(x1/32.0);
+		int x_end = (int)(x2/32.0);
+		for (int i = x_start; i >= x_end; i--) {
+			if (tiles[y_ceil][i].getType() == N_COLLIDES && tiles[y_floor][i].getType() == N_COLLIDES) {
+				pos_x = (i==x_end)?x2:(32*i);
+			}
+			else {
+				break;
+			}
+		}
+	}
+	return pos_x;
 }
 
 double Tile_Engine::get_y_collision(double y1, double y2, double x1, double x_size, double y_size) {
