@@ -26,6 +26,8 @@
  */
 #include "graphic_engine.hpp"
 #include "tile_engine.hpp"
+#include "player/control.hpp"
+#include "player/player.hpp"
 
 #include <iostream>
 
@@ -33,13 +35,26 @@
 
 int main(int argc, char *argv[]) {
 	Tile_Engine tile("01.level");
-	Graphic_Engine graphic(&tile, 1024, 768);
+	Control control;
+	Player player(32.0, 864.0, 10, &tile, &control);
+	Graphic_Engine graphic(&tile, 1024, 768, &player);
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) == -1) {
 		std::cerr << "Error while SDL_Init: " << SDL_GetError();
 		exit(EXIT_FAILURE);
 	}
-	graphic.drawWorld(0,0);
-	int x;
-	std::cin >> x;
+	atexit(SDL_Quit);
+	SDL_Event event;
+	Uint32 t0=0;
+	Uint32 t1=0;
+	double time;
+	while(1) {
+		control.key_event(&event);
+		t1 = SDL_GetTicks();
+		time = (double) (t1-t0)/80.0;
+		t0 = t1;
+		player.calculate(time);
+		graphic.drawWorld(0,0);
+	}
+	SDL_Quit();
 	return 0;
 }

@@ -31,19 +31,20 @@
 #define CONTROL_HPP_
 
 class Control {
-	enum {
-		left = 0,
-		right = 1,
-		up,
-		down,
-	};
 public:
 	Control();
 	~Control() {};
 	void key_event(SDL_Event *event);
-	bool is_pressed(int key) {return this->key[key];};
+	bool is_pressed(int key) {return this->keys[key];};
 private:
-	bool key[4];
+	bool keys[5];
+public:
+	enum {
+		left = 0,
+		right = 1,
+		up = 2,
+		down = 3
+	};
 };
 
 

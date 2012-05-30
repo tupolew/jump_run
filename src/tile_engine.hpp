@@ -35,6 +35,7 @@ public:
 	Tile_Engine(const char *file);
 	~Tile_Engine();
 	Tile *getTile(int x, int y);
+	bool get_collision(double x, double y) {return (y <= y_size*32.0 && x <= x_size*32.0 && x >= 0 && y >=0 )?getTile(x/32,y/32)->getType():true;}
 	double get_x_collision(double x1, double x2, double y1, double x_size, double y_size);
 	double get_y_collision(double y1, double y2, double x1, double x_size, double y_size);
 	int get_x_size() {return x_size;};
@@ -44,6 +45,11 @@ private:
 	int x_size;
 	int y_size;
 	Tile **tiles;
+public:
+	enum {
+		N_COLLIDES = false,
+		COLLIDES = true
+	};
 };
 
 #endif /* TILE_ENGINE_HPP_ */

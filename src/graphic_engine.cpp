@@ -34,12 +34,13 @@
 
 #include "graphic_engine.hpp"
 
-Graphic_Engine::Graphic_Engine(Tile_Engine *tile_engine, Uint16 x_res, Uint16 y_res ) {
+Graphic_Engine::Graphic_Engine(Tile_Engine *tile_engine, Uint16 x_res, Uint16 y_res, Player *player) {
 	this->tile_engine = tile_engine;
 	/*if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) == -1) {
 		std::cerr << "Error while SDL_Init: " << SDL_GetError();
 		exit(EXIT_FAILURE);
 	}*/
+	human_player = player;
 	this->x_res = x_res;
 	this->y_res = y_res;
 	screen = SDL_SetVideoMode(x_res, y_res, 32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_HWACCEL | SDL_SRCALPHA);
@@ -47,6 +48,7 @@ Graphic_Engine::Graphic_Engine(Tile_Engine *tile_engine, Uint16 x_res, Uint16 y_
 		std::cerr << "Error while SDL_SetVideoMode(): " << SDL_GetError();
 		exit(EXIT_FAILURE);
 	}
+	player_human = IMG_Load("./textures/tux_1.png");
 	background = IMG_Load("./textures/background_01.png");
 	textures = new SDL_Surface*[36];
 	textures[1] = IMG_Load("./textures/oben_1.png");
@@ -102,5 +104,6 @@ void Graphic_Engine::drawWorld(int x, int y) {
 			SDL_BlitSurface(textures[tile->getSurface()], &SDL_Rect {0, 0, 32, 32}, screen, &SDL_Rect {(Sint16)k2, (Sint16)i2, 32, 32});
 		}
 	}
+	SDL_BlitSurface(player_human, &SDL_Rect {0, 0, 32, 32}, screen, &SDL_Rect {(Sint16)human_player->get_x_pos(), (Sint16)human_player->get_y_pos()-(tile_engine->get_y_size()*32-y_res-y), 32, 32});
 	SDL_Flip(screen);
 }

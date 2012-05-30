@@ -84,7 +84,7 @@ Tile_Engine::Tile_Engine(const char *file) {
 }
 
 Tile_Engine::~Tile_Engine() {
-	// TODO Auto-generated destructor stub
+	// TODO
 }
 
 double Tile_Engine::get_x_collision(double x1, double x2, double y1, double x_size, double y_size) {
@@ -112,7 +112,7 @@ double Tile_Engine::get_y_collision(double y1, double y2, double x1, double x_si
 		int y_start = (int)(y1/32.0);
 		int y_end = (int)(y2/32.0);
 		for (int i = y_start; i >= y_end; i--) {
-			if (tiles[i][x_left].getType() == 0 && tiles[i][x_right].getType() == 0) {
+			if (tiles[i][x_left].getType() == N_COLLIDES && tiles[i][x_right].getType() == N_COLLIDES) {
 				pos_y = (i==y_end)?y2:(32*i);
 			}
 			else {

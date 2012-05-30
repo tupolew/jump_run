@@ -34,13 +34,52 @@ Control::Control() {
 		std::cerr << "Error while SDL_Init: " << SDL_GetError();
 		exit(EXIT_FAILURE);
 	}*/
-	key[0] = false;
-	key[1] = false;
-	key[2] = false;
-	key[3] = false;
+	keys[0] = false;
+	keys[1] = false;
+	keys[2] = false;
+	keys[3] = false;
 }
 
 
-void key_event(SDL_Event *event) {
-
+void Control::key_event(SDL_Event *event) {
+	if (SDL_PollEvent( event )) {
+		switch(event->type) {
+			case SDL_KEYDOWN:
+				switch(event->key.keysym.sym){
+					case SDLK_LEFT:
+						keys[left]=true;
+						break;
+					case SDLK_RIGHT:
+						keys[right]=true;
+						break;
+					case SDLK_SPACE:
+						keys[up]=true;
+						break;
+					case SDLK_DOWN:
+						keys[down]=true;
+						break;
+					default:
+						break;
+					}
+				break;
+			case SDL_KEYUP:
+				switch(event->key.keysym.sym){
+					case SDLK_LEFT:
+						keys[left]=false;
+						break;
+					case SDLK_RIGHT:
+						keys[right]=false;
+						break;
+					case SDLK_SPACE:
+						keys[up]=false;
+						break;
+					case SDLK_DOWN:
+						keys[down]=false;
+						break;
+					default:
+						exit(0);
+					}
+			break;
+		}
+	}
 }

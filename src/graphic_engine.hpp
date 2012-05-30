@@ -32,17 +32,21 @@
 
 #include "tile_engine.hpp"
 #include "tile.hpp"
+#include "player/player.hpp"
 
 class Graphic_Engine {
 public:
 	Graphic_Engine() = delete;
-	Graphic_Engine(Tile_Engine *tile_engine, Uint16 x_res, Uint16 y_res);
+	Graphic_Engine(Tile_Engine *tile_engine, Uint16 x_res, Uint16 y_res, Player *player);
 	~Graphic_Engine();
 	void drawWorld(int x, int y);
+	//void drawPlayer(int x, int y);
 private:
 	Uint16 x_res;
 	Uint16 y_res;
 	bool fullscreen;
+	Player *human_player;
+	SDL_Surface *player_human;
 	SDL_Surface *background;
 	SDL_Surface **textures;
 	SDL_Surface *screen;
