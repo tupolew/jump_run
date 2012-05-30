@@ -27,11 +27,19 @@
 #include "graphic_engine.hpp"
 #include "tile_engine.hpp"
 
+#include <iostream>
+
+#include <SDL/SDL.h>
+
 int main(int argc, char *argv[]) {
 	Tile_Engine tile("01.level");
 	Graphic_Engine graphic(&tile, 1024, 768);
-	while(true) {
-		graphic.drawWorld(0,8);
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) == -1) {
+		std::cerr << "Error while SDL_Init: " << SDL_GetError();
+		exit(EXIT_FAILURE);
 	}
+	graphic.drawWorld(0,0);
+	int x;
+	std::cin >> x;
 	return 0;
 }

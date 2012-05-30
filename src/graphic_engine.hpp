@@ -43,6 +43,7 @@ private:
 	Uint16 x_res;
 	Uint16 y_res;
 	bool fullscreen;
+	SDL_Surface *background;
 	SDL_Surface **textures;
 	SDL_Surface *screen;
 	Tile_Engine *tile_engine;

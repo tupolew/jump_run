@@ -24,26 +24,28 @@
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the FreeBSD Project.#include "graphic_engine.hpp"
  */
-#ifndef TILE_ENGINE_HPP_
-#define TILE_ENGINE_HPP_
 
-#include "tile.hpp"
+#include <SDL/SDL.h>
 
-class Tile_Engine {
+#ifndef CONTROL_HPP_
+#define CONTROL_HPP_
+
+class Control {
+	enum {
+		left = 0,
+		right = 1,
+		up,
+		down,
+	};
 public:
-	Tile_Engine() = delete;
-	Tile_Engine(const char *file);
-	~Tile_Engine();
-	Tile *getTile(int x, int y);
-	double get_x_collision(double x1, double x2, double y1, double x_size, double y_size);
-	double get_y_collision(double y1, double y2, double x1, double x_size, double y_size);
-	int get_x_size() {return x_size;};
-	int get_y_size() {return y_size;};
-	Tile null;
+	Control();
+	~Control() {};
+	void key_event(SDL_Event *event);
+	bool is_pressed(int key) {return this->key[key];};
 private:
-	int x_size;
-	int y_size;
-	Tile **tiles;
+	bool key[4];
 };
 
-#endif /* TILE_ENGINE_HPP_ */
+
+
+#endif /* CONTROL_HPP_ */

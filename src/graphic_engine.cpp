@@ -34,12 +34,12 @@
 
 #include "graphic_engine.hpp"
 
-Graphic_Engine::Graphic_Engine(Tile_Engine *tile_engine, Uint16 x_res, Uint16 y_res) {
+Graphic_Engine::Graphic_Engine(Tile_Engine *tile_engine, Uint16 x_res, Uint16 y_res ) {
 	this->tile_engine = tile_engine;
-	if (SDL_Init(SDL_INIT_VIDEO ) == -1) {
+	/*if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) == -1) {
 		std::cerr << "Error while SDL_Init: " << SDL_GetError();
 		exit(EXIT_FAILURE);
-	}
+	}*/
 	this->x_res = x_res;
 	this->y_res = y_res;
 	screen = SDL_SetVideoMode(x_res, y_res, 32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_HWACCEL | SDL_SRCALPHA);
@@ -47,11 +47,45 @@ Graphic_Engine::Graphic_Engine(Tile_Engine *tile_engine, Uint16 x_res, Uint16 y_
 		std::cerr << "Error while SDL_SetVideoMode(): " << SDL_GetError();
 		exit(EXIT_FAILURE);
 	}
-	textures = new SDL_Surface*[10];
-	textures[1] = IMG_Load("./textures/texture01.png");
-	textures[2] = IMG_Load("./textures/texture02.png");
-	textures[3] = IMG_Load("./textures/texture03.png");
-	textures[4] = IMG_Load("./textures/texture04.png");
+	background = IMG_Load("./textures/background_01.png");
+	textures = new SDL_Surface*[36];
+	textures[1] = IMG_Load("./textures/oben_1.png");
+	textures[2] = IMG_Load("./textures/oben_2_1.png");
+	textures[3] = IMG_Load("./textures/oben_2_2.png");
+	textures[4] = IMG_Load("./textures/oben_3.png");
+	textures[5] = IMG_Load("./textures/oben_4.png");
+	textures[6] = IMG_Load("./textures/oben_5.png");
+	textures[7] = IMG_Load("./textures/mitte_0.png");
+	textures[8] = IMG_Load("./textures/rechts_1_1.png");
+	textures[9] = IMG_Load("./textures/rechts_1_2.png");
+	textures[10] = IMG_Load("./textures/links_1_1.png");
+	textures[11] = IMG_Load("./textures/links_1_2.png");
+	textures[12] = IMG_Load("./textures/oben_6_1.png");
+	textures[13] = IMG_Load("./textures/oben_6_2.png");
+	textures[14] = IMG_Load("./textures/oben_7.png");
+	textures[15] = IMG_Load("./textures/oben_7.png");
+	textures[16] = IMG_Load("./textures/skellet_1_1.png");
+	textures[17] = IMG_Load("./textures/skellet_2_1.png");
+	textures[18] = IMG_Load("./textures/skellet_3_1.png");
+	textures[19] = IMG_Load("./textures/skellet_1_2.png");
+	textures[20] = IMG_Load("./textures/skellet_2_2.png");
+	textures[21] = IMG_Load("./textures/skellet_3_2.png");
+	textures[22] = IMG_Load("./textures/skellet_2_3.png");
+	textures[23] = IMG_Load("./textures/skellet_3_3.png");
+	textures[24] = IMG_Load("./textures/bone_1_1.png");
+	textures[25] = IMG_Load("./textures/bone_1_2.png");
+	textures[26] = IMG_Load("./textures/human_1_1.png");
+	textures[27] = IMG_Load("./textures/human_2_1.png");
+	textures[28] = IMG_Load("./textures/human_3_1.png");
+	textures[29] = IMG_Load("./textures/human_4_1.png");
+	textures[30] = IMG_Load("./textures/human_5_1.png");
+	textures[31] = IMG_Load("./textures/human_1_2.png");
+	textures[32] = IMG_Load("./textures/human_2_2.png");
+	textures[33] = IMG_Load("./textures/human_3_2.png");
+	textures[34] = IMG_Load("./textures/human_4_2.png");
+	textures[35] = IMG_Load("./textures/human_5_2.png");
+	textures[36] = IMG_Load("./textures/human_4_3.png");
+
 }
 
 Graphic_Engine::~Graphic_Engine() {
@@ -60,12 +94,12 @@ Graphic_Engine::~Graphic_Engine() {
 
 void Graphic_Engine::drawWorld(int x, int y) {
 	fesetround(FE_DOWNWARD);
-	//SDL_Rect rect = {0, 0, x_res, y_res};
+	SDL_BlitSurface(background, &SDL_Rect {0, 0, x_res, y_res}, screen, &SDL_Rect {0, 0, x_res, y_res});
 	SDL_MapRGB( screen->format, 0, 0, 0 );
-	for (int i1 = tile_engine->get_y_size()*32-y, i2 = y_res-32+fmod(y,32)+32; i2 >= 0; i1-=32, i2-=32) {
-		for (int k = 0-fmod(x,32); k <= x_res; k+=32) {
-			Tile *tile = tile_engine->getTile((k+x)/32, i1/32);
-			SDL_BlitSurface(textures[tile->getSurface()], &SDL_Rect {0, 0, 32, 32}, screen, &SDL_Rect {(Sint16)k, (Sint16)i2, 32, 32});
+	for (int i1 = tile_engine->get_y_size()*32-y, i2 = y_res-fmod(fmod(y,32),32); i2 >= 0 && i1 >= 0; i1-=32, i2-=32) {
+		for (int k1 = tile_engine->get_x_size()*32-x, k2 = 0-fmod(x,32); k2 <= x_res && k1 >= 0; k2+=32, k1-=32) {
+			Tile *tile = tile_engine->getTile((k2+x)/32, i1/32);
+			SDL_BlitSurface(textures[tile->getSurface()], &SDL_Rect {0, 0, 32, 32}, screen, &SDL_Rect {(Sint16)k2, (Sint16)i2, 32, 32});
 		}
 	}
 	SDL_Flip(screen);

@@ -87,6 +87,42 @@ Tile_Engine::~Tile_Engine() {
 	// TODO Auto-generated destructor stub
 }
 
+double Tile_Engine::get_x_collision(double x1, double x2, double y1, double x_size, double y_size) {
+	return 0;
+}
+
+double Tile_Engine::get_y_collision(double y1, double y2, double x1, double x_size, double y_size) {
+	double pos_y;
+	if (y2 > y1 ) {
+		int x_left = (int)(x1/32.0);
+		int x_right = (int)((x1+x_size)/32.0);
+		int y_start = (int)((y1+y_size)/32.0);
+		int y_end = (int)((y2+y_size)/32.0);
+		for (int i = y_start; i <= y_end; i++) {
+			if (tiles[i][x_left].getType() == 0 && tiles[i][x_right].getType() == 0) {
+				pos_y = (i==y_end)?y2:(32*i);
+			}
+			else {
+				break;
+			}
+		}
+	} else {
+		int x_left = (int)(x1/32.0);
+		int x_right = (int)((x1+x_size)/32.0);
+		int y_start = (int)(y1/32.0);
+		int y_end = (int)(y2/32.0);
+		for (int i = y_start; i >= y_end; i--) {
+			if (tiles[i][x_left].getType() == 0 && tiles[i][x_right].getType() == 0) {
+				pos_y = (i==y_end)?y2:(32*i);
+			}
+			else {
+				break;
+			}
+		}
+	}
+	return pos_y;
+}
+
 Tile *Tile_Engine::getTile(int x, int y) {
 	return (y < y_size && x < x_size)?&tiles[y][x]:&null;
 }

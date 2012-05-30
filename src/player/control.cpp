@@ -24,26 +24,23 @@
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the FreeBSD Project.#include "graphic_engine.hpp"
  */
-#ifndef TILE_ENGINE_HPP_
-#define TILE_ENGINE_HPP_
 
-#include "tile.hpp"
+#include "control.hpp"
 
-class Tile_Engine {
-public:
-	Tile_Engine() = delete;
-	Tile_Engine(const char *file);
-	~Tile_Engine();
-	Tile *getTile(int x, int y);
-	double get_x_collision(double x1, double x2, double y1, double x_size, double y_size);
-	double get_y_collision(double y1, double y2, double x1, double x_size, double y_size);
-	int get_x_size() {return x_size;};
-	int get_y_size() {return y_size;};
-	Tile null;
-private:
-	int x_size;
-	int y_size;
-	Tile **tiles;
-};
+#include <SDL/SDL.h>
 
-#endif /* TILE_ENGINE_HPP_ */
+Control::Control() {
+	/*if (SDL_Init(SDL_INIT_TIMER) == -1) {
+		std::cerr << "Error while SDL_Init: " << SDL_GetError();
+		exit(EXIT_FAILURE);
+	}*/
+	key[0] = false;
+	key[1] = false;
+	key[2] = false;
+	key[3] = false;
+}
+
+
+void key_event(SDL_Event *event) {
+
+}
