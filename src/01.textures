@@ -1,17 +1,36 @@
-background: ./textures/background_01.png
-texture count: 12
-texture 01: ./textures/mitte_0.png
-texture 02: ./textures/oben_1.png
-texture 03: ./textures/oben_2_1.png
-texture 04: ./textures/oben_2_2.png
-texture 05: ./textures/oben_3.png
-texture 06: ./textures/oben_4.png
-texture 07: ./textures/oben_5.png
-texture 08: ./textures/oben_6_1.png
-texture 09: ./textures/oben_6_2.png
-texture 10: ./textures/rechts_1_1.png
-texture 11: ./textures/rechts_1_2.png
-texture 12: ./textures/links_1_1.png
-texture 13: ./textures/links_1_2.png
-texture 14: ./textures/oben_7.png
-
++./textures/oben_1.png
++./textures/oben_2_1.png
++./textures/oben_2_2.png
++./textures/oben_3.png
++./textures/oben_4.png
++./textures/oben_5.png
++./textures/mitte_0.png
++./textures/rechts_1_1.png
+-./textures/rechts_1_2.png
+-./textures/links_1_1.png
++./textures/links_1_2.png
++./textures/oben_6_1.png
++./textures/oben_6_2.png
++./textures/oben_7.png
++./textures/oben_7.png
++./textures/skellet_1_1.png
++./textures/skellet_2_1.png
++./textures/skellet_3_1.png
++./textures/skellet_1_2.png
++./textures/skellet_2_2.png
++./textures/skellet_3_2.png
++./textures/skellet_2_3.png
++./textures/skellet_3_3.png
++./textures/bone_1_1.png
++./textures/bone_1_2.png
++./textures/human_1_1.png
++./textures/human_2_1.png
++./textures/human_3_1.png
++./textures/human_4_1.png
++./textures/human_5_1.png
++./textures/human_1_2.png
++./textures/human_2_2.png
++./textures/human_3_2.png
++./textures/human_4_2.png
++./textures/human_5_2.png
++./textures/human_4_3.png

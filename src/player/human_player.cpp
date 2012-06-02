@@ -24,20 +24,7 @@
 // of the authors and should not be interpreted as representing official policies,
 // either expressed or implied, of the FreeBSD Project.#include "graphic_engine.hpp"
 //
-#include "tile.hpp"
 
-Tile::Tile() {
-	// TODO Auto-generated constructor stub
 
-}
 
-Tile::~Tile() {
-	// TODO Auto-generated destructor stub
-}
 
-void Tile::setAll(unsigned char type, unsigned char event, unsigned char options, unsigned char surface) {
-	this->type = type;
-	this->event = event;
-	this->options = options;
-	this->surface = surface;
-}
