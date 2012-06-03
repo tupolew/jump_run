@@ -26,38 +26,43 @@
 //
 #include "graphic_engine.hpp"
 #include "tile_engine.hpp"
-#include "player/control.hpp"
 #include "player/player.hpp"
+#include "player/human_player.hpp"
+#include "player/evelator.hpp"
 
 #include <iostream>
-
-#include <cmath>
-
+#include <list>
 #include <SDL/SDL.h>
 
 
 int main(int argc, char *argv[]) {
 	Tile_Engine tile("01.level");
-	Control control;
-	Player player(0.0, 32.0,32.0,32.0, 10, &tile, &control);
-	Graphic_Engine graphic(&tile, 1024, 768, &player);
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) == -1) {
+	Human_Player human_player(0, 32.0, 32.0, 32.0, 10.0, &tile);
+	Evelator evelator(64.0, 32.0, 128.0, 16.0, 0.0, 15.0, &tile);
+	std::list<Player *> players;
+	players.push_front(dynamic_cast<Player *>(&human_player));
+	players.push_front(dynamic_cast<Player *>(&evelator));
+	Graphic_Engine graphic(&tile, 1024, 768, players);
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTTHREAD) == -1) {
 		std::cerr << "Error while SDL_Init: " << SDL_GetError();
 		exit(EXIT_FAILURE);
 	}
 	atexit(SDL_Quit);
+	human_player.setTexture(SDL_DisplayFormatAlpha(IMG_Load("./textures/tux_1.png")));
+	evelator.setTexture(SDL_DisplayFormat(IMG_Load("./textures/aufzug_1.png")));
 	SDL_Event event;
 	Uint32 t0=0;
 	Uint32 t1=0;
 	Uint32 delta_t=0;
 	while(1) {
-		control.key_event(&event);
+		human_player.key_event(&event);
 		t1 = SDL_GetTicks();
 		delta_t = t1-t0;
 		t0 = t1;
-		//std::cout << 1000/delta_t << "\n";
-		player.calculate((double)delta_t/80.0);
-		graphic.drawWorld(player.get_x_pos()-300,0);
+		std::cout << 1000/delta_t << "\n";
+		human_player.calculate((double)delta_t/80.0);
+		evelator.calculate((double)delta_t/80.0);
+		graphic.drawWorld(human_player.get_x_pos()-300,0);
 		//std::cout << player.get_y_pos() << "\n";
 		//SDL_Delay(50);
 	}

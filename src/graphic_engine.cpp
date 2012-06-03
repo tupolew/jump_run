@@ -27,20 +27,20 @@
 
 #include <iostream>
 #include <cstdlib>
-#include <fenv.h>
+//#include <fenv.h>
 #include <math.h>
 
 #include <SDL/SDL.h>
 
 #include "graphic_engine.hpp"
 
-Graphic_Engine::Graphic_Engine(Tile_Engine *tile_engine, Uint16 x_res, Uint16 y_res, Player *player) {
+Graphic_Engine::Graphic_Engine(Tile_Engine *tile_engine, Uint16 x_res, Uint16 y_res, std::list<Player *> _players) {
+	players = _players;
 	this->tile_engine = tile_engine;
 	/*if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) == -1) {
 		std::cerr << "Error while SDL_Init: " << SDL_GetError();
 		exit(EXIT_FAILURE);
 	}*/
-	human_player = player;
 	this->x_res = x_res;
 	this->y_res = y_res;
 	screen = SDL_SetVideoMode(x_res, y_res, 32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_HWACCEL | SDL_SRCALPHA);
@@ -48,12 +48,11 @@ Graphic_Engine::Graphic_Engine(Tile_Engine *tile_engine, Uint16 x_res, Uint16 y_
 		std::cerr << "Error while SDL_SetVideoMode(): " << SDL_GetError();
 		exit(EXIT_FAILURE);
 	}
-	player_human = IMG_Load("./textures/tux_1.png");
 	SDL_Surface *background_tmp = IMG_Load("./textures/background_01.png");
 	background = SDL_DisplayFormat(background_tmp);
 	//background = IMG_Load("./textures/background_01.png");
 	SDL_FreeSurface(background_tmp);
-	SDL_Surface** textures_tmp = new SDL_Surface*[36];
+	SDL_Surface** textures_tmp = new SDL_Surface*[38];
 	textures_tmp[1] = IMG_Load("./textures/oben_1.png");
 	textures_tmp[2] = IMG_Load("./textures/oben_2_1.png");
 	textures_tmp[3] = IMG_Load("./textures/oben_2_2.png");
@@ -90,7 +89,8 @@ Graphic_Engine::Graphic_Engine(Tile_Engine *tile_engine, Uint16 x_res, Uint16 y_
 	textures_tmp[34] = IMG_Load("./textures/human_4_2.png");
 	textures_tmp[35] = IMG_Load("./textures/human_5_2.png");
 	textures_tmp[36] = IMG_Load("./textures/human_4_3.png");
-	textures = new SDL_Surface*[36];
+	textures_tmp[37] = IMG_Load("./textures/kiste_1.png");
+	textures = new SDL_Surface*[38];
 	textures[1] = SDL_DisplayFormat(textures_tmp[1]);
 	textures[2] = SDL_DisplayFormat(textures_tmp[2]);
 	textures[3] = SDL_DisplayFormat(textures_tmp[3]);
@@ -127,6 +127,7 @@ Graphic_Engine::Graphic_Engine(Tile_Engine *tile_engine, Uint16 x_res, Uint16 y_
 	textures[34] = SDL_DisplayFormat(textures_tmp[34]);
 	textures[35] = SDL_DisplayFormat(textures_tmp[35]);
 	textures[36] = SDL_DisplayFormat(textures_tmp[36]);
+	textures[37] = SDL_DisplayFormat(textures_tmp[37]);
 	SDL_FreeSurface(textures_tmp[1]);
 	SDL_FreeSurface(textures_tmp[2]);
 	SDL_FreeSurface(textures_tmp[3]);
@@ -163,6 +164,7 @@ Graphic_Engine::Graphic_Engine(Tile_Engine *tile_engine, Uint16 x_res, Uint16 y_
 	SDL_FreeSurface(textures_tmp[34]);
 	SDL_FreeSurface(textures_tmp[35]);
 	SDL_FreeSurface(textures_tmp[36]);
+	SDL_FreeSurface(textures_tmp[37]);
 }
 
 Graphic_Engine::~Graphic_Engine() {
@@ -182,6 +184,10 @@ void Graphic_Engine::drawWorld(int x, int y) {
 			}
 		}
 	}
-	SDL_BlitSurface(player_human, &SDL_Rect {0, 0, 32, 32}, screen, &SDL_Rect {(Sint16)human_player->get_x_pos()-x, (Sint16)human_player->get_y_pos()-(tile_engine->get_y_size()*32-y_res-y), 32, 32});
+	std::list<Player *>::iterator iterator;
+	for(iterator = players.begin(); iterator != players.end(); iterator++) {
+		SDL_BlitSurface((*iterator)->getTexture(), &SDL_Rect {0, 0, (*iterator)->get_x_size(), (*iterator)->get_y_size()}, screen, &SDL_Rect {(*iterator)->get_x_pos()-x, (*iterator)->get_y_pos()-(tile_engine->get_y_size()*32-y_res-y), (*iterator)->get_x_size(), (*iterator)->get_y_size()});
+	}
+	//SDL_BlitSurface(player_human, &SDL_Rect {0, 0, 32, 32}, screen, &SDL_Rect {(Sint16)human_player->get_x_pos()-x, (Sint16)human_player->get_y_pos()-(tile_engine->get_y_size()*32-y_res-y), 32, 32});
 	SDL_Flip(screen);
 }

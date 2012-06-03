@@ -28,7 +28,46 @@
 #ifndef HUMAN_PLAYER_HPP_
 #define HUMAN_PLAYER_HPP_
 
+#include "player/player.hpp"
 
+#include "tile_engine.hpp"
+
+class Human_Player : public Player {
+private:
+	bool keys[4];
+	enum {
+		left = 0,
+		right = 1,
+		up = 2,
+		down = 3
+	};
+public:
+	Human_Player() = delete;
+	Human_Player(double pos_x, double pos_y, double size_x, double size_y, double gravity, Tile_Engine *tile_engine);
+	~Human_Player() {};
+	double get_x_size() {return _size_x;}
+	double get_y_size() {return _size_y;}
+	double get_x_pos() {return _pos_x;}
+	double get_y_pos() {return _pos_y;}
+	std::list<Player*> get_enemys() {return enemies;}
+	void set_enemys(std::list<Player*> enemies) {this->enemies = enemies;}
+	void remove_enemy (Player *enemy) {enemies.remove(enemy);}
+	void calculate(double time);
+	void key_event(SDL_Event *event);
+	void setTexture(SDL_Surface *surface) {texture = surface;}
+	SDL_Surface *getTexture() {return texture;}
+private:
+	Tile_Engine *_tile_engine;
+	std::list<Player*> enemies;
+	SDL_Surface *texture;
+	double _pos_x;
+	double _pos_y;
+	double _vel_x;
+	double _vel_y;
+	double _size_x;
+	double _size_y;
+	double _gravity;
+};
 
 
 #endif /* HUMAN_PLAYER_HPP_ */

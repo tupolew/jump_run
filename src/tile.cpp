@@ -31,6 +31,13 @@ Tile::Tile() {
 
 }
 
+Tile::Tile(unsigned char _type, unsigned char _event, unsigned char _options, unsigned char _surface) {
+	type = _type;
+	event = _event;
+	options = _options;
+	surface = _surface;
+}
+
 Tile::~Tile() {
 	// TODO Auto-generated destructor stub
 }

@@ -30,6 +30,7 @@
 class Tile {
 public:
 	Tile();
+	Tile(unsigned char type, unsigned char event, unsigned char options, unsigned char surface);
 	Tile(Tile &tile);
 	~Tile();
 	void setAll(unsigned char type, unsigned char event, unsigned char options, unsigned char surface);

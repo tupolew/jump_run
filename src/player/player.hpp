@@ -25,32 +25,27 @@
 // either expressed or implied, of the FreeBSD Project.#include "graphic_engine.hpp"
 //
 
-#include "../tile_engine.hpp"
-#include "control.hpp"
+#include "tile_engine.hpp"
+#include <list>
+#include <SDL/SDL.h>
+
 
 #ifndef PLAYER_HPP_
 #define PLAYER_HPP_
 
 class Player {
 public:
-	Player() = delete;
-	Player(double pos_x, double pos_y, double size_x, double size_y, double gravity, Tile_Engine *tile_engine, Control *control);
-	~Player() {};
-	double get_x_pos() {return _pos_x;}
-	double get_y_pos() {return _pos_y;}
-	Player **get_enemys();
-	void set_enemys(Player **enemys);
-	void calculate(double time);
-private:
-	Tile_Engine *_tile_engine;
-	Control *_control;
-	double _pos_x;
-	double _pos_y;
-	double _vel_x;
-	double _vel_y;
-	double _size_x;
-	double _size_y;
-	double _gravity;
+	virtual ~Player() {}
+	virtual double get_x_size() = 0;
+	virtual double get_y_size() = 0;
+	virtual double get_x_pos() = 0;
+	virtual double get_y_pos() = 0;
+	virtual std::list<Player*> get_enemys() = 0;
+	virtual void set_enemys(std::list<Player *> enemies) = 0;
+	virtual void remove_enemy(Player *enemy) = 0;
+	virtual void calculate(double time) = 0;
+	virtual SDL_Surface *getTexture() = 0;
+	virtual void setTexture(SDL_Surface *surface) = 0;
 };
 
 

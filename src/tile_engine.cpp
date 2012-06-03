@@ -90,8 +90,8 @@ Tile_Engine::~Tile_Engine() {
 }
 
 bool Tile_Engine::does_bottom_collide(double x, double y, double x_size, double y_size) {
-	int _y      = (y_size+y)/32;
-	int x_start = x/32;
+	int _y      = floor((y_size+y)/32.0);
+	int x_start = floor(x/32.0);
 	int x_end   = floor(nextafter(x_size+x, x_size-1))/32;
 	for (int i = x_start; i <= x_end; i++) {
 		if (tiles[_y][i].getType() == COLLIDES) {
@@ -104,26 +104,26 @@ bool Tile_Engine::does_bottom_collide(double x, double y, double x_size, double 
 double Tile_Engine::get_x_collision_move(double x1, double x2, double y1, double x_size, double y_size) {
 	double pos_x = x1;
 	if (x2 > x1 ) { //Player bewegt sich rechts
-		int y_start = y1/32;
-		int y_end   = floor(nextafter(y_size+y1, y_size-1))/32;
-		int x_start = floor(nextafter(x_size+x1, x_size-1))/32;
-		int x_end   = floor(nextafter(x_size+x2, x_size-1))/32;
+		int y_start = floor(y1/32.0);
+		int y_end   = floor(nextafter(y_size+y1, y_size-1)/32.0);
+		int x_start = floor(nextafter(x_size+x1, x_size-1)/32.0);
+		int x_end   = floor(nextafter(x_size+x2, x_size-1)/32.0);
 		for (int i = x_start; i <= x_end; i++) {
 			for (int k = y_start; k <= y_end; k++) {
-				if (tiles[k][i].getType() == COLLIDES) {
+				if (getTile(i, k)->getType() == COLLIDES) {
 					return pos_x;
 				}
 			}
 			pos_x = (i==x_end)?x2:(double)(i+1)*32.0-x_size;//-nextafter(x_size, x_size-1);
 		}
-	} else { //Player bewegt sich links
-		int y_start = y1/32;
-		int y_end   = floor(nextafter(y_size+y1, y_size-1))/32;
-		int x_start = x1/32;
-		int x_end   = x2/32;
+	} else if (x2 < x1){ //Player bewegt sich links
+		int y_start = floor(y1/32.0);
+		int y_end   = floor(nextafter(y_size+y1, y_size-1)/32.0);
+		int x_start = floor(x1/32.0);
+		int x_end   = floor(x2/32.0);
 		for (int i = x_start; i >= x_end; i--) {
 			for (int k = y_start; k <= y_end; k++) {
-				if (tiles[k][i].getType() == COLLIDES) {
+				if (getTile(i, k)->getType() == COLLIDES) {
 					return pos_x;
 				}
 			}
@@ -136,26 +136,26 @@ double Tile_Engine::get_x_collision_move(double x1, double x2, double y1, double
 double Tile_Engine::get_y_collision_move(double y1, double y2, double x1, double x_size, double y_size) {
 	double pos_y = y1;
 	if (y2 > y1 ) {
-		int x_start = x1/32;
-		int x_end   = floor(nextafter(x_size+x1, x_size-1))/32;
-		int y_start = floor(nextafter(y_size+y1, y_size-1))/32;
-		int y_end   = floor(nextafter(y_size+y2, y_size-1))/32;
+		int x_start = floor(x1/32.0);
+		int x_end   = floor(nextafter(x_size+x1, x_size-1)/32.0);
+		int y_start = floor(nextafter(y_size+y1, y_size-1)/32.0);
+		int y_end   = floor(nextafter(y_size+y2, y_size-1)/32.0);
 		for (int i = y_start; i <= y_end; i++) {
 			for (int k = x_start; k <= x_end; k++) {
-				if (tiles[i][k].getType() == COLLIDES) {
+				if (getTile(k, i)->getType() == COLLIDES) {
 					return pos_y;
 				}
 			}
 			pos_y = (i==y_end)?y2:(double)(i+1)*32.0-y_size;//-nextafter(y_size, y_size-1);
 		}
 	} else {
-		int x_start = x1/32;
-		int x_end   = floor(nextafter(x_size+x1,x_size-1))/32;
-		int y_start = y1/32;
-		int y_end   = y2/32;
+		int x_start = floor(x1/32.0);
+		int x_end   = floor(nextafter(x_size+x1,x_size-1)/32.0);
+		int y_start = floor(y1/32.0);
+		int y_end   = floor(y2/32.0);
 		for (int i = y_start; i >= y_end; i--) {
 			for (int k = x_start; k <= x_end; k++) {
-				if (tiles[i][k].getType() == COLLIDES) {
+				if (getTile(k, i)->getType() == COLLIDES) {
 					return pos_y;
 				}
 			}
@@ -166,5 +166,5 @@ double Tile_Engine::get_y_collision_move(double y1, double y2, double x1, double
 }
 
 Tile *Tile_Engine::getTile(int x, int y) {
-	return (y < y_size && x < x_size && y >= 0 && x >= 0)?&tiles[y][x]:NULL;
+	return (y < y_size && x < x_size && y >= 0 && x >= 0)?&tiles[y][x]:&null;
 }
