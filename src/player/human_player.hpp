@@ -43,30 +43,36 @@ private:
 	};
 public:
 	Human_Player() = delete;
-	Human_Player(double pos_x, double pos_y, double size_x, double size_y, double gravity, Tile_Engine *tile_engine);
+	Human_Player(double _pos_x, double _pos_y, double _size_x, double _size_y, double _gravity, Tile_Engine *_tile_engine);
 	~Human_Player() {};
-	double get_x_size() {return _size_x;}
-	double get_y_size() {return _size_y;}
-	double get_x_pos() {return _pos_x;}
-	double get_y_pos() {return _pos_y;}
-	std::list<Player*> get_enemys() {return enemies;}
-	void set_enemys(std::list<Player*> enemies) {this->enemies = enemies;}
-	void remove_enemy (Player *enemy) {enemies.remove(enemy);}
+	double get_x_size() {return size_x;}
+	double get_y_size() {return size_y;}
+	double get_x_pos() {return pos_x;}
+	double get_y_pos() {return pos_y;}
+	void remove_player (Player *player);
+	void add_player_top_food_chain(Player *player);
+	void add_player_bottom_food_chain(Player *player);
+	void add_player_collision(Player *player);
+	void force_push(double _pos_x, double _pos_y);
+	//void player_y_collision(double y1, double y2);
+	bool check_y_bottom_collision();
 	void calculate(double time);
 	void key_event(SDL_Event *event);
 	void setTexture(SDL_Surface *surface) {texture = surface;}
 	SDL_Surface *getTexture() {return texture;}
 private:
-	Tile_Engine *_tile_engine;
-	std::list<Player*> enemies;
+	Tile_Engine *tile_engine;
+	std::list<Player *> players_collision;
+	std::list<Player *> players_top_food_chain;
+	std::list<Player *> players_bottom_food_chain;
 	SDL_Surface *texture;
-	double _pos_x;
-	double _pos_y;
-	double _vel_x;
-	double _vel_y;
-	double _size_x;
-	double _size_y;
-	double _gravity;
+	double pos_x;
+	double pos_y;
+	double vel_x;
+	double vel_y;
+	double size_x;
+	double size_y;
+	double gravity;
 };
 
 
