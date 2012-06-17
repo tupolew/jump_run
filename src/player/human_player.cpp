@@ -162,6 +162,8 @@ void Human_Player::add_collision_player(Player *_player) {
 }
 
 bool Human_Player::can_collide_player(char _priority) {
+	if (_priority > priority)
+		return Player::COLLIDE;
 	return Player::N_COLLIDE;
 }
 

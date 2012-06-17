@@ -57,7 +57,8 @@ position Evelator::get_size() {
 }
 
 bool Evelator::can_collide_player(char _priority) {
-	return (_priority >= priority)?Player::COLLIDE:Player::N_COLLIDE;
+	return COLLIDE;
+	//return (_priority >= priority)?Player::COLLIDE:Player::N_COLLIDE;
 }
 
 void Evelator::event(int _event, position _pos, Player *_enemy, bool _state) {
