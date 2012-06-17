@@ -52,22 +52,28 @@ public:
 		ACTIVE = 0,
 		PASSIVE = 1
 	};
+	enum {
+		COLLIDE = 0,
+		N_COLLIDE = 1
+	};
 public:
 	virtual ~Player() {}
-	virtual char get_priority();
-	virtual void set_priority(char priority);
+	virtual char get_priority() = 0;
+	virtual void set_priority(char priority) = 0;
 	virtual position get_position() = 0;
 	virtual position get_size() = 0;
 
+	virtual void set_size(position _size) = 0;
+
 	virtual void event(int event, position pos, Player *enemy, bool state) = 0;
 
-	virtual double get_x_size() = 0;
-	virtual double get_y_size() = 0;
-	virtual double get_x_pos() = 0;
-	virtual double get_y_pos() = 0;
-	virtual void force_push(double _pos_x, double _pos_y) = 0;
-	virtual void kill();
-	position calculate(double time) = 0;
+	virtual bool can_collide_player(char _priority) = 0;
+	virtual void add_collision_player(Player *player) = 0;
+	virtual void rem_collision_player(Player *player) = 0;
+
+	virtual void force_push(position _pos) = 0;
+	virtual void kill() = 0;
+	virtual position calculate(double time) = 0;
 	virtual SDL_Surface *getTexture() = 0;
 	virtual void setTexture(SDL_Surface *surface) = 0;
 };

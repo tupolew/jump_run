@@ -31,113 +31,86 @@
 
 #include <iostream>
 
-#include <cmath>
 
-Human_Player::Human_Player(double _pos_x, double _pos_y, double _size_x, double _size_y, double _gravity, Tile_Engine *_tile_engine) {
-	pos_x = _pos_x;
-	pos_y = _pos_y;
+char Human_Player::get_priority() {
+	return priority;
+}
+
+void Human_Player::set_size(position _size) {
+	size = _size;
+}
+
+void Human_Player::kill() {
+	std::cout << "Game Over" << "\n";
+}
+
+void Human_Player::set_priority(char _priority) {
+	priority = _priority;
+}
+
+Human_Player::Human_Player(position _pos, position _size, double _gravity, SDL_Surface *_surface, Tile_Engine *_tile_engine, Player_Engine *player_engine) {
+	texture = _surface;
+	pos =_pos;
 	gravity = _gravity;
+	size = _size;
 	tile_engine = _tile_engine;
-	size_x = _size_x;
-	size_y = _size_y;
 	keys[0] = false;
 	keys[1] = false;
 	keys[2] = false;
 	keys[3] = false;
+	priority = 0;
+	event_ = new SDL_Event;
 }
 
-bool Human_Player::check_y_bottom_collision() {
-	std::list<Player *>::iterator iterator;
-	for (iterator = players_collision.begin(); iterator != players_collision.end(); iterator++) {
-		if ( (	( (*iterator)->get_x_pos() <= pos_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() >= pos_x ) ||
-			( (*iterator)->get_x_pos() >= pos_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() <= pos_x+size_x ) ||
-			( (*iterator)->get_x_pos() <= pos_x+size_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() >= pos_x+size_x ) )
-			&& (*iterator)->get_y_pos() == pos_y+size_x) {
 
-			return Tile_Engine::COLLIDES;
-		}
-	}
-
-	return Tile_Engine::N_COLLIDES;
-}
-
-void Human_Player::calculate(double time) {
-	if (vel_x == 0) {
+position Human_Player::calculate(double time) {
+	key_event(event_);
+	if (vel.x == 0) {
 		if (keys[right]) {
-			vel_x = 9.0;
+			vel.x = 5.0;
 		} else if (keys[left]) {
-			vel_x = -9.0;
+			vel.x = -5.0;
 		}
 	}
-	if (tile_engine->does_bottom_collide(pos_x, pos_y, size_x, size_y) == Tile_Engine::COLLIDES || check_y_bottom_collision() == Tile_Engine::COLLIDES) {
-			if (keys[up]) {
-				vel_y = -40.0;
-			}
-			if (vel_x != 0){
-				if (keys[right])
-					vel_x = ( 2.0*time+vel_x >  30.0)? 30.0: 2.0*time+vel_x;
-				if (keys[left])
-					vel_x = (-2.0*time+vel_x < -30.0)?-30.0:-2.0*time+vel_x;
-			}
-			vel_x=(vel_x > 0)?vel_x-0.8*time:vel_x+0.8*time;
+	if (tile_engine->does_bottom_collide(pos, size) == Tile_Engine::COLLIDES || player_engine->touch_bottom(this, players_collision) == Player::COLLIDE) {
+		if (keys[up])
+			vel.y = -60.0;
+		if (vel.x != 0){
+			if (keys[right])
+				vel.x = ( 2.0*time+vel.x >  30.0)? 30.0: 2.0*time+vel.x;
+			if (keys[left])
+				vel.x = (-2.0*time+vel.x < -30.0)?-30.0:-2.0*time+vel.x;
+		}
+		if (keys[down])
+			vel.x = 0;
+		vel.x=(vel.x > 0)?vel.x-0.8*time:vel.x+0.8*time;
 	} else {
-		vel_y = vel_y+7*time;
+		vel.y = vel.y+15*time;
 	}
-	if (vel_x != 0) {
-			double _pos_x = pos_x + time*vel_x;
-			double __pos_x = pos_x;
-			pos_x = tile_engine->get_x_collision_move(pos_x, _pos_x, pos_y, size_x, size_y);
-			if (pos_x > __pos_x) {
-				std::list<Player *>::iterator iterator;
-				for(iterator = players_collision.begin(); iterator != players_collision.end(); iterator++) {
-					/*if ((*iterator)->get_x_pos() >= __pos_x+size_x && (*iterator)->get_x_pos() < pos_x+size_x)
-						(*iterator)->force_push(pos_x+size_x, (*iterator)->get_y_pos());*/
-				}
-			} else if (pos_x < _pos_x) {
-				std::list<Player *>::iterator iterator;
-				for(iterator = players_collision.begin(); iterator != players_collision.end(); iterator++) {
-					if ((*iterator)->get_x_pos()+(*iterator)->get_x_size() <= __pos_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() > pos_x)
-						(*iterator)->force_push(pos_x-(*iterator)->get_x_size(), (*iterator)->get_y_pos());
-				}
-			}
-			if (_pos_x != pos_x)
-				vel_x = 0;
-		}
-		if (vel_y != 0) {
-			double _pos_y = pos_y + time*vel_y;
-			double __pos_y = pos_y;
-			pos_y = tile_engine->get_y_collision_move(pos_y, _pos_y, pos_x, size_x, size_y);
-			if (pos_y > __pos_y) {
-				std::list<Player *>::iterator iterator;
-				for(iterator = players_collision.begin(); iterator != players_collision.end(); iterator++) {
-					if ( (	( (*iterator)->get_x_pos() <= pos_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() >= pos_x ) ||
-							( (*iterator)->get_x_pos() >= pos_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() <= pos_x+size_x ) ||
-							//( (*iterator)->get_x_pos() <= pos_x+size_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() >= pos_x+size_x)
-							( (*iterator)->get_x_pos() <= pos_x+size_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() >= pos_x+size_x ) )
-							&& ((*iterator)->get_y_pos() >= __pos_y+size_y && (*iterator)->get_y_pos() < pos_y+size_y))
-						pos_y = __pos_y;
-				}
-			} else if (pos_y < __pos_y) {
-				std::list<Player *>::iterator iterator;
-				for(iterator = players_collision.begin(); iterator != players_collision.end(); iterator++) {
-					if ( (	( (*iterator)->get_x_pos() <= pos_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() >= pos_x ) ||
-							( (*iterator)->get_x_pos() >= pos_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() <= pos_x+size_x ) ||
-							( (*iterator)->get_x_pos() <= pos_x+size_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() >= pos_x+size_x ) )
-							&& ((*iterator)->get_y_pos()+(*iterator)->get_y_size() <= __pos_y && (*iterator)->get_y_pos()+(*iterator)->get_y_size() >= pos_y))
-						pos_y = __pos_y;
-				}
-			}
-			if (_pos_y != pos_y)
-				vel_y = 0;
-		}
+	position new_pos = pos;
+	if (vel.x != 0) {
+		double new_x = pos.x + time*vel.x;
+		new_pos.x = tile_engine->get_x_collision_move(pos.x, new_x, pos.y, size.x, size.y);
+		if (new_pos.x != new_x)
+			vel.x = 0;
+		pos.x = new_pos.x;
+	}
+	if (vel.y != 0) {
+		double new_y = pos.y + time*vel.y;
+		new_pos.y = tile_engine->get_y_collision_move(pos.y, new_y, pos.x, size.x, size.y);
+		if (new_pos.y != new_y)
+			vel.y = 0;
+		pos.y = new_pos.y;
+	}
+	return new_pos;
 }
 
 
-void Human_Player::key_event(SDL_Event *event) {
-	if (SDL_PollEvent( event )) {
-		switch(event->type) {
+void Human_Player::key_event(SDL_Event *_event) {
+	if (SDL_PollEvent( _event )) {
+		switch(_event->type) {
 			case SDL_KEYDOWN:
-				switch(event->key.keysym.sym){
+				switch(_event->key.keysym.sym){
 					case SDLK_LEFT:
 						keys[left]=true;
 						break;
@@ -157,7 +130,7 @@ void Human_Player::key_event(SDL_Event *event) {
 					}
 				break;
 			case SDL_KEYUP:
-				switch(event->key.keysym.sym){
+				switch(_event->key.keysym.sym){
 					case SDLK_LEFT:
 						keys[left]=false;
 						break;
@@ -180,25 +153,42 @@ void Human_Player::key_event(SDL_Event *event) {
 	}
 }
 
-void Human_Player::remove_player(Player *player) {
-	players_collision.remove(player);
-	players_top_food_chain.remove(player);
-	players_bottom_food_chain.remove(player);
+void Human_Player::rem_collision_player(Player *_player) {
+	players_collision.remove(_player);
 }
 
-void Human_Player::add_player_collision(Player *player) {
-	players_collision.push_back(player);
+void Human_Player::add_collision_player(Player *_player) {
+	players_collision.push_back(_player);
 }
 
-void Human_Player::add_player_top_food_chain(Player *player) {
-	players_top_food_chain.push_back(player);
+bool Human_Player::can_collide_player(char _priority) {
+	return Player::N_COLLIDE;
 }
 
-void Human_Player::add_player_bottom_food_chain(Player *player) {
-	players_bottom_food_chain.push_back(player);
+void Human_Player::force_push(position _pos) {
+	if (pos.y > _pos.y)
+		vel.y = 0;
+	else if (_pos.y > pos.y && vel.y < 0)
+		vel.y = 0;
+	pos.y = tile_engine->get_y_collision_move(pos.y, _pos.y, pos.x, size.x, size.y);
+	pos.x = tile_engine->get_x_collision_move(pos.x, _pos.x, pos.y, size.x, size.y);
 }
 
-void Human_Player::force_push(double _pos_x, double _pos_y) {
-	pos_x = _pos_x;
-	pos_y = _pos_y;
+
+void Human_Player::event(int event, position pos, Player *enemy, bool state) {
+
+}
+
+void Human_Player::setTexture(SDL_Surface *_texture) {
+	//if (texture != NULL)
+		//SDL_FreeSurface(texture);
+	texture = _texture;
+}
+
+position Human_Player::get_position() {
+	return pos;
+}
+
+position Human_Player::get_size() {
+	return size;
 }

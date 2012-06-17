@@ -28,6 +28,7 @@
 #define TILE_ENGINE_HPP_
 
 #include "tile.hpp"
+#include "player/player.hpp"
 
 class Tile_Engine {
 public:
@@ -35,7 +36,7 @@ public:
 	Tile_Engine(const char *file);
 	~Tile_Engine();
 	Tile *getTile(int x, int y);
-	bool does_bottom_collide(double x, double y, double x_size, double y_size);
+	bool does_bottom_collide(position _pos, position _size);
 	bool get_collision(double x, double y) {return (y <= y_size*32.0 && x <= x_size*32.0 && x >= 0 && y >=0 )?getTile(x/32,y/32)->getType():true;}
 	double get_x_collision_move(double x1, double x2, double y1, double x_size, double y_size);
 	double get_y_collision_move(double y1, double y2, double x1, double x_size, double y_size);

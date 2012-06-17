@@ -1,36 +1,95 @@
-/*
- * evelator.cpp
- *
- *  Created on: 02.06.2012
- *      Author: tupolew
- */
+//
+// Copyright (c) 2012, Samuel Memmel
+// All rights reserved.
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright notice, this
+//    list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright notice,
+//    this list of conditions and the following disclaimer in the documentation
+//    and/or other materials provided with the distribution.
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+// ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+// The views and conclusions contained in the software and documentation are those
+// of the authors and should not be interpreted as representing official policies,
+// either expressed or implied, of the FreeBSD Project.#include "graphic_engine.hpp"
+//
 
 #include "player/evelator.hpp"
 
-Evelator::Evelator(double _pos_x, double _pos_y, double _size_x, double _size_y, double _vel_x, double _vel_y, Tile_Engine *_tile_engine) {
-	pos_x = _pos_x;
-	pos_y = _pos_y;
-	size_x = _size_x;
-	size_y = _size_y;
-	vel_x = _vel_x;
-	vel_y = _vel_y;
+#include <iostream>
+#include <cstdlib>
+
+#include "SDL/SDL_image.h"
+
+void Evelator::set_size(position _size) {
+	size = _size;
+}
+
+Evelator::Evelator(position _pos, position _size, position _vel, SDL_Surface *_surface, Tile_Engine *_tile_engine) {
+	texture =  _surface;
+	pos = _pos;
+	size = _size;
+	vel = _vel;
+	priority = 127;
 	tile_engine = _tile_engine;
 }
 
-double Evelator::get_x_pos() {
-	return size_x;
+void Evelator::kill() {
+
 }
 
-double Evelator::get_y_pos() {
-	return size_y;
+position Evelator::get_position() {
+	return pos;
+}
+position Evelator::get_size() {
+	return size;
 }
 
-double Evelator::get_x_size() {
-	return size_x;
+bool Evelator::can_collide_player(char _priority) {
+	return (_priority >= priority)?Player::COLLIDE:Player::N_COLLIDE;
 }
 
-double Evelator::get_x_size() {
-	return size_y;
+void Evelator::event(int _event, position _pos, Player *_enemy, bool _state) {
+	if (_state == Evelator::ACTIVE) {
+		switch(_event) {
+		case Evelator::TOP:
+			_enemy->force_push(position {_enemy->get_position().x, pos.y-_enemy->get_size().y});
+			break;
+		case Evelator::BOTTOM:
+			_enemy->force_push(position {_enemy->get_position().x, pos.y+size.y});
+			break;
+		default:
+			std::cerr << "Error: Got an impossible event at Evelator::event(). Eventnumber is " << _event << "\n";
+			exit(1);
+		}
+	} else {
+		switch(_event) {
+		case Evelator::LEFT:
+			_enemy->force_push(position {pos.x-_enemy->get_size().x, _enemy->get_position().y} );
+			break;
+		case Evelator::RIGHT:
+			_enemy->force_push(position {pos.x+size.x, _enemy->get_position().y} );
+			break;
+		case Evelator::TOP:
+			_enemy->force_push(position {_enemy->get_position().x, pos.y-_enemy->get_size().y} );
+			break;
+		case Evelator::BOTTOM:
+			_enemy->force_push(position {_enemy->get_position().x, pos.y+size.y} );
+			break;
+		}
+
+	}
 }
 
 char Evelator::get_priority() {
@@ -41,76 +100,32 @@ void Evelator::set_priority(char _priority) {
 	priority = _priority;
 }
 
-void Evelator::collision_right() {
-
-}
-
-void Evelator::player_y_collision(double y1, double y2) {
-	if (y1 > y2) {
-		std::list<Player *>::iterator iterator;
-		for (iterator = players.begin(); iterator != players.end(); iterator++) {
-			if ( ( ( (*iterator)->get_x_pos() <= pos_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() >= pos_x )
-					|| ( (*iterator)->get_x_pos() >= pos_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() <= pos_x+size_x )
-					|| ( (*iterator)->get_x_pos() <= pos_x+size_x &&  (*iterator)->get_x_pos()+(*iterator)->get_x_size() >= pos_x+size_x ) )
-				&& ( (*iterator)->get_y_pos()+(*iterator)->get_y_size() <= y1  && (*iterator)->get_y_pos()+(*iterator)->get_y_size() >= y2) ) {
-				(*iterator)->force_push((*iterator)->get_x_pos(), y2-(*iterator)->get_y_size());
-			}
-		}
-	} else if (y1 < y2) {
-		std::list<Player *>::iterator iterator;
-		for (iterator = players.begin(); iterator != players.end(); iterator++) {
-			if ( ( ( (*iterator)->get_x_pos() <= pos_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() >= pos_x )
-					|| ( (*iterator)->get_x_pos() >= pos_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() <= pos_x+size_x )
-					|| ( (*iterator)->get_x_pos() <= pos_x+size_x &&  (*iterator)->get_x_pos()+(*iterator)->get_x_size() >= pos_x+size_x ) )
-				&& ( (*iterator)->get_y_pos() >= y1+size_y && (*iterator)->get_y_pos() <= y2+size_y)  ) {
-				(*iterator)->force_push((*iterator)->get_x_pos(), y2+size_y);
-			}
-		}
+position Evelator::calculate(double time) {
+	position calc_pos = pos;
+	position new_pos = pos;
+	if (vel.x != 0) {
+		calc_pos.x = pos.x + time*vel.x;
+		new_pos.x = tile_engine->get_x_collision_move(pos.x, calc_pos.x, pos.y, size.x, size.y);
+		if (new_pos.x != calc_pos.x)
+			vel.x = (-1)*vel.x;
 	}
-}
-
-void Evelator::calculate(double time) {
-	if (vel_x != 0) {
-		double _pos_x = pos_x + time*vel_x;
-		double __pos_x = pos_x;
-		pos_x = tile_engine->get_x_collision_move(pos_x, _pos_x, pos_y, size_x, size_y);
-		if (pos_x > __pos_x) {
-			std::list<Player *>::iterator iterator;
-			for(iterator = players.begin(); iterator != players.end(); iterator++) {
-				/*if ((*iterator)->get_x_pos() >= __pos_x+size_x && (*iterator)->get_x_pos() < pos_x+size_x)
-					(*iterator)->force_push(pos_x+size_x, (*iterator)->get_y_pos());*/
-			}
-		} else if (pos_x < _pos_x) {
-			std::list<Player *>::iterator iterator;
-			for(iterator = players.begin(); iterator != players.end(); iterator++) {
-				if ((*iterator)->get_x_pos()+(*iterator)->get_x_size() <= __pos_x && (*iterator)->get_x_pos()+(*iterator)->get_x_size() > pos_x)
-					(*iterator)->force_push(pos_x-(*iterator)->get_x_size(), (*iterator)->get_y_pos());
-			}
-		}
-		if (_pos_x != pos_x)
-			vel_x = (-1)*vel_x;
+	if (vel.y != 0) {
+		calc_pos.y = pos.y + time*vel.y;
+		new_pos.y = tile_engine->get_y_collision_move(pos.y, calc_pos.y, pos.x, size.x, size.y);
+		if (new_pos.y != calc_pos.y)
+			vel.y = (-1)*vel.y;
 	}
-	if (vel_y != 0) {
-		double _pos_y = pos_y;
-		pos_y = tile_engine->get_y_collision_move(pos_y, pos_y+time*vel_y, pos_x, size_x, size_y);
-		player_y_collision(_pos_y, pos_y);
-		if (_pos_y+time*vel_y != pos_y)
-			vel_y = (-1)*vel_y;
-	}
+	pos = new_pos;
+	return new_pos;
 }
 
-void Evelator::remove_player(Player *player) {
-	players.remove(player);
+void Evelator::rem_collision_player(Player *_player) {
+	players.remove(_player);
 }
 
-void Evelator::add_player_collision(Player *player) {
-	players.push_back(player);
+void Evelator::add_collision_player(Player *_player) {
+	players.push_back(_player);
 }
 
-void Evelator::add_player_top_food_chain(Player *player) {
-	players.push_back(player);
-}
 
-void Evelator::add_player_bottom_food_chain(Player *player) {
-	players.push_back(player);
-}
+

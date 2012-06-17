@@ -22,37 +22,80 @@
 //
 // The views and conclusions contained in the software and documentation are those
 // of the authors and should not be interpreted as representing official policies,
-// either expressed or implied, of the FreeBSD Project.#include "graphic_engine.hpp"
+// either expressed or implied, of the FreeBSD Project.
 //
-#ifndef GRAPHIC_ENGINE_H_
-#define GRAPHIC_ENGINE_H_
 
+#include "player/clubmate.hpp"
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 
-#include <list>
+ClubMate::ClubMate(position _pos, position _size, SDL_Surface *_surface, Tile_Engine *_tile_engine) {
+	surface = _surface;
+	pos = _pos;
+	size = _size;
+	vel.x = 30;
+	vel.y = 0;
+	priority = 1;
+}
 
-#include "tile_engine.hpp"
-#include "tile.hpp"
-#include "player/player.hpp"
-#include "player_engine.hpp"
+ClubMate::~ClubMate() {
+	// TODO Auto-generated destructor stub
+}
 
-class Graphic_Engine {
-public:
-	Graphic_Engine() = delete;
-	Graphic_Engine(Tile_Engine *tile_engine, Uint16 x_res, Uint16 y_res, Player_Engine *_player_engine);
-	~Graphic_Engine();
-	void drawWorld(int x, int y);
-	//void drawPlayer(int x, int y);
-private:
-	Uint16 x_res;
-	Uint16 y_res;
-	bool fullscreen;
-	SDL_Surface *background;
-	SDL_Surface **textures;
-	SDL_Surface *screen;
-	Player_Engine *player_engine;
-	Tile_Engine *tile_engine;
-};
+char ClubMate::get_priority() {
+	return priority;
+}
 
-#endif /* GRAPHIC_ENGINE_H_ */
+void ClubMate::set_priority(char _priority) {
+	priority = _priority;
+}
+
+position ClubMate::get_position() {
+	return pos;
+}
+
+position ClubMate::get_size() {
+	return size;
+}
+
+void ClubMate::event(int event, position pos, Player *enemy, bool state) {
+	enemy->set_size(position{64, 64});
+	enemy->setTexture(SDL_DisplayFormatAlpha(IMG_Load("./textures/tux_big_1.png")));
+}
+
+bool ClubMate::can_collide_player(char _priority) {
+	return Player::N_COLLIDE;
+}
+
+void ClubMate::add_collision_player(Player *player) {
+
+}
+
+void ClubMate::rem_collision_player(Player *player) {
+
+}
+
+void ClubMate::force_push(position _pos) {
+
+}
+
+void ClubMate::kill() {
+
+}
+
+void ClubMate::set_size(position _size) {
+
+}
+
+position ClubMate::calculate(double time) {
+	position _pos;
+	return _pos;
+}
+
+SDL_Surface *ClubMate::getTexture() {
+	return surface;
+}
+
+void ClubMate::setTexture(SDL_Surface *_surface) {
+	surface = _surface;
+}

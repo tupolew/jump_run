@@ -25,14 +25,19 @@
 // either expressed or implied, of the FreeBSD Project.#include "graphic_engine.hpp"
 //
 #include "graphic_engine.hpp"
+#include "player_engine.hpp"
 #include "tile_engine.hpp"
 #include "player/player.hpp"
 #include "player/human_player.hpp"
 #include "player/evelator.hpp"
+#include "player/clubmate.hpp"
+#include "player/cannon.hpp"
 
 #include <iostream>
 #include <list>
 #include <SDL/SDL.h>
+
+#include "player/human_player.hpp"
 
 
 int main(int argc, char *argv[]) {
@@ -41,30 +46,23 @@ int main(int argc, char *argv[]) {
 		exit(EXIT_FAILURE);
 	}
 	atexit(SDL_Quit);
-	Tile_Engine tile("01.level");
-	Human_Player human_player(480.0, 32.0, 32.0, 32.0, 10.0, &tile);
-	Evelator evelator(0.0, 0.0, 128.0, 16.0, 0.0, 8.0, &tile);
-	human_player.add_player_collision(&evelator);
-	evelator.add_player_collision(&human_player);
-	std::list<Player *> players;
-	players.push_front(dynamic_cast<Player *>(&human_player));
-	players.push_front(dynamic_cast<Player *>(&evelator));
-	Graphic_Engine graphic(&tile, 1024, 768, players);
-	human_player.setTexture(SDL_DisplayFormatAlpha(IMG_Load("./textures/tux_1.png")));
-	evelator.setTexture(SDL_DisplayFormat(IMG_Load("./textures/aufzug_1.png")));
-	SDL_Event event;
+
+	Tile_Engine tile_engine("01.level");
+	Player_Engine player_engine(&tile_engine);
+	Graphic_Engine graphic_engine(&tile_engine, 1024, 768, &player_engine);
+
+
+
 	Uint32 t0=0;
 	Uint32 t1=0;
 	Uint32 delta_t=0;
 	while(1) {
-		human_player.key_event(&event);
 		t1 = SDL_GetTicks();
 		delta_t = t1-t0;
 		t0 = t1;
-		std::cout << 1000/delta_t << "\n";
-		human_player.calculate((double)delta_t/80.0);
-		evelator.calculate((double)delta_t/80.0);
-		graphic.drawWorld(human_player.get_x_pos()-300,0);
+		//std::cout << 1000/delta_t << "\n";
+		player_engine.run((double)delta_t/80.0);
+		graphic_engine.drawWorld(player_engine.get_human_player()->get_position().x-300,0);
 		//std::cout << player.get_y_pos() << "\n";
 		//SDL_Delay(50);
 	}

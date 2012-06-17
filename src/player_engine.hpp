@@ -22,12 +22,14 @@
 //
 // The views and conclusions contained in the software and documentation are those
 // of the authors and should not be interpreted as representing official policies,
-// either expressed or implied, of the FreeBSD Project.#include "graphic_engine.hpp"
+// either expressed or implied, of the FreeBSD Project.
 //
 
 #include <list>
 
-#include "player/player.hpp"
+#include "player/human_player.hpp"
+
+class Human_Player;
 
 #ifndef PLAYER_ENGINE_HPP_
 #define PLAYER_ENGINE_HPP_
@@ -37,14 +39,20 @@ public:
 	Player_Engine(Tile_Engine *_tile_engine);
 	~Player_Engine() {}
 
+	bool touch_bottom(Player *player, std::list<Player *> players);
+
 	void add_player(Player *_player);
 	void rem_player(Player *_player);
 	std::list<Player *> get_players();
+
+	Human_Player *get_human_player();
 
 	void run(double time);
 private:
 	Tile_Engine *tile_engine;
 	std::list<Player *> players;
+	std::list<Player *> rem_players;
+	Human_Player *human_player;
 };
 
 
